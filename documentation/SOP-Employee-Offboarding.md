@@ -1,83 +1,125 @@
 # SOP: Employee Offboarding
 
-## Document Information
-| | |
-|---|---|
-| **Document Title** | Employee Offboarding Standard Operating Procedure |
-| **Department** | Information Technology |
-| **Author** | [Your Name] |
-| **Date** | April 2026 |
-| **Version** | 1.0 |
-| **Status** | Active |
+**Department:** Information Technology
+**Author:** [Pacifique Agizo]
+**Date:** April 2026
+**Version:** 1.0
+
+---
 
 ## Purpose
-Ensure immediate and complete revocation of system access
-for departing employees to protect company data, maintain
-security compliance, and reduce insider threat exposure.
+
+When an employee leaves, their access needs to go with them -- immediately. This SOP covers how that happens, whether the departure is planned or not.
+
+The risk window between someone's last day and IT cutting their access is where most insider incidents happen. This process closes that window.
+
+---
 
 ## Scope
-Applies to all departing employees including resignations,
-terminations, and contract endings across all departments.
 
-## Prerequisites
+All departing employees: resignations, terminations, and contract endings across every department.
+
+Terminations are executed the same day notification is received. Resignations are scheduled for the employee's last working day unless security circumstances require earlier action.
+
+---
+
+## What You Need Before Starting
+
 - Domain Administrator credentials
-- Notification from HR of employee departure
-- Employee SamAccountName
+- Employee's SamAccountName (e.g. `jsmith`)
+- HR notification confirming the departure
+
+---
 
 ## Procedure
 
-### Step 1: Receive Offboarding Notification
-- HR notifies IT of departure date and employee details
-- For immediate terminations, execute same day
-- For resignations, schedule for last day of employment
+### Step 1: Receive the Notification
 
-### Step 2: Disable User Account
+HR contacts IT with the employee name, username, and departure date. For terminations, that notification triggers immediate action -- not end of day, not tomorrow morning. Same hour if possible.
+
+For resignations, confirm the last working date with HR and schedule the offboarding to run that day before the employee's shift ends.
+
+---
+
+### Step 2: Disable the Account and Strip Access
+
 Run the offboarding script:
+
 ```powershell
 .\Remove-EmployeeAccess.ps1 -Username "jsmith"
 ```
-Or manually in AD Users and Computers:
-- Locate user account in departmental OU
-- Right-click > Disable Account
-- Confirm account shows disabled icon
 
-### Step 3: Remove Group Memberships
-- Open user Properties > Member Of tab
-- Remove from all security groups except Domain Users
-- Click Apply > OK
+The script handles everything in sequence: disables the account, removes all group memberships, moves the object to the Disabled Accounts OU, and logs the action with a timestamp.
 
-### Step 4: Move to Disabled Accounts OU
-- Right-click disabled account > Move
-- Select Disabled Accounts OU
-- Click OK
+If you need to do it manually:
 
-### Step 5: Log Offboarding Action
-Document the following in the offboarding log:
-- Employee name and username
-- Date and time of account disable
-- Administrator who performed offboarding
-- Ticket or request number if applicable
+1. Open **Active Directory Users and Computers**
+2. Find the account in its departmental OU
+3. Right-click the account and select **Disable Account**
+4. Open **Properties > Member Of**
+5. Remove every group except Domain Users
+6. Right-click the account and select **Move**
+7. Choose **Disabled Accounts** OU and confirm
 
-### Step 6: Verify Access Revocation
-- Attempt login with disabled account to confirm access denied
-- Confirm account no longer appears in any security groups
-- Verify account moved to Disabled Accounts OU
+---
+
+### Step 3: Log the Action
+
+Record the following in the offboarding log immediately after completing the steps:
+
+- Employee full name and SamAccountName
+- Date and exact time the account was disabled
+- Your name as the administrator who performed the action
+- HR ticket or request number if one exists
+
+This log is your audit trail. If anyone questions when access was revoked or who did it, this is what you point to.
+
+---
+
+### Step 4: Verify
+
+Do not skip this step.
+
+- Attempt a login with the disabled account and confirm it is denied
+- Check the **Member Of** tab and confirm no security groups remain
+- Confirm the account appears in the Disabled Accounts OU
+
+Takes 90 seconds and eliminates any doubt that the job is done.
+
+---
+
+### Step 5: Notify HR
+
+Reply to HR confirming offboarding is complete. Include the timestamp from the log. This closes the loop and documents that IT acted on the notification.
+
+---
 
 ## Completion Checklist
-- [ ] Account disabled immediately upon departure
-- [ ] Removed from all security groups
+
+- [ ] Account disabled
+- [ ] All security groups removed
 - [ ] Account moved to Disabled Accounts OU
-- [ ] Offboarding logged with timestamp
-- [ ] Access revocation verified
+- [ ] Action logged with timestamp and admin name
+- [ ] Login attempt confirmed as denied
 - [ ] HR notified of completion
 
+---
+
 ## Retention Policy
-Disabled accounts are retained in the Disabled Accounts OU
-for 90 days for audit purposes then permanently deleted.
 
-## Expected Completion Time
-Under 2 minutes per user
+Disabled accounts stay in the Disabled Accounts OU for 90 days before permanent deletion. That window covers audit requests, access disputes, and any forensic work that might come up after someone leaves.
 
-## Related Documents
-- SOP-New-User-Onboarding.md
-- scripts/Remove-EmployeeAccess.ps1
+Do not delete accounts before the 90-day mark without written approval from IT management.
+
+---
+
+## Expected Time
+
+Under 2 minutes using the script. Under 5 minutes manually.
+
+---
+
+## Related
+
+- `SOP-New-User-Onboarding.md`
+- `scripts/Remove-EmployeeAccess.ps1`
