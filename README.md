@@ -2,11 +2,11 @@
 
 ## What This Is
 
-I built a fully functional Active Directory environment from scratch to simulate what a sysadmin actually does on day one at a small business. Not a tutorial follow-along -- a real deployment with real problems. DC01 went down because a GPO I linked at the wrong scope blocked Server Manager. CLIENT01 could not join the domain because DNS was pointing nowhere. I fixed both without a walkthrough.
+I built a fully functional Active Directory environment from scratch to simulate what a sysadmin actually does on day one at a small business. Not a tutorial follow-along a real deployment with real problems. DC01 went down because a GPO I linked at the wrong scope blocked Server Manager. CLIENT01 could not join the domain because DNS was pointing nowhere. I fixed both without a walkthrough.
 
 The environment runs Windows Server 2022 and Windows 10 Pro on VirtualBox, simulating TechBridge Solutions -- a 30-user IT consulting firm with no existing identity management.
 
----
+
 
 ## The Problem I Was Solving
 
